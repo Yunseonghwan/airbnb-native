@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import { AppLoading } from "expo";
 import { Asset } from "expo-asset";
-import { View, Text, Image } from "react-native";
+import { Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as Font from "expo-font";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react"; //persistGate는 화면 랜더링을 위해 state를 load할때까지 기다려주는 컴포넌트
+// persistgate 는  핸드폰에 state를 저장할수있게해줌
+import Gate from "./components/Gate";
+import store, { persistor } from "./redux/store";
 
 const cacheImages = (images) =>
   images.map((image) => {
@@ -30,7 +35,11 @@ export default function App() {
     return Promise.all([...fontPromises, ...imagePromises]);
   };
   return isReady ? (
-    <Text>I'm ready</Text>
+    <Provider store={store}>
+      <PersistGate persistor={persistor}>
+        <Gate />
+      </PersistGate>
+    </Provider>
   ) : (
     <AppLoading
       onError={console.error}
