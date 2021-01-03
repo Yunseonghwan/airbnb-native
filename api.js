@@ -5,7 +5,7 @@ const callApi = async (method, path, data, jwt) => {
     Authorization: jwt,
     "Content-Type": "application/json",
   };
-  const baseUrl = "http://127.0.0.1:8000/api/v1";
+  const baseUrl = "http://392eb56fe515.ngrok.io/api/v1";
   const fullUrl = `${baseUrl}${path}`;
   if (method === "get" || method === "delete") {
     return axios[method](fullUrl, { headers });
@@ -14,4 +14,7 @@ const callApi = async (method, path, data, jwt) => {
   }
 };
 
-export const createAccount = (form) => callApi("post", "/users/", form);
+export default {
+  createAccount: (form) => callApi("post", "/users/", form),
+  login: (form) => callApi("post", "/users/login/", form),
+};
