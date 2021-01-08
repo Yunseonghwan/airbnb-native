@@ -5,9 +5,10 @@ import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { connect, useSelector, useDispatch } from "react-redux"; //useSelector는 state에 접근하게하고 state를 보내기도함
 import { logIn, logOut } from "../redux/usersSlice";
+import { NavigationContainer } from "@react-navigation/native";
 
 import Auth from "../navigation/Auth";
-import { NavigationContainer } from "@react-navigation/native";
+import Main from "../navigation/Main";
 
 const Gate = () => {
   const { isLoggedIn } = useSelector((state) => state.usersReducer);
@@ -15,13 +16,7 @@ const Gate = () => {
 
   return (
     <NavigationContainer>
-      {isLoggedIn ? (
-        <TouchableOpacity onPress={() => dispatch(logOut())}>
-          <Text>Log Out</Text>
-        </TouchableOpacity>
-      ) : (
-        <Auth />
-      )}
+      {isLoggedIn ? <Main /> : <Auth />}
     </NavigationContainer>
   );
 };
