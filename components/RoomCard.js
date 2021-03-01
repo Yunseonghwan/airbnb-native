@@ -1,15 +1,21 @@
 import React from "react";
 import Pt from "prop-types";
 import styled from "styled-components/native";
-import { Dimensions } from "react-native";
-import Swiper from "react-native-swiper";
+import { TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import utils from "../utils";
+import { useDispatch } from "react-redux";
+import { toggleFav } from "../redux/usersSlice";
+import colors from "../colors";
+import { useNavigation } from "@react-navigation/native";
 
-const { width, height } = Dimensions.get("screen");
+import RoomPhotos from "./RoomPhotos";
 
 const Container = styled.View`
   width: 100%;
   margin-bottom: 25px;
   align-items: flex-start;
+  position: relative;
 `;
 
 const Name = styled.Text`
@@ -44,58 +50,84 @@ const SuperHostText = styled.Text`
   font-size: 10px;
 `;
 
-const PhotosContainer = styled.View`
-  margin-bottom: 10px;
-  overflow: hidden;
-  width: 100%;
-  height: ${height / 4}px;
+const FavButton = styled.View`
+  background-color: white;
+  width:50px
+  height: 50px;
+  border-radius: 25px;
+  justify-content: center;
+  align-items: center;
+ 
 `;
 
-const SlideImage = styled.Image`
-  width: 100%;
-  height: 100%;
+const TOpacity = styled.TouchableOpacity`
+  position: absolute;
+  z-index: 10;
+  right: 10px;
+  top: 10px;
 `;
 
-const RoomCard = ({ id, isFav, isSuperHost, photos, name, price }) => (
-  <Container>
-    <PhotosContainer>
-      {photos.length === 0 ? (
-        <SlideImage
-          resizeMode="repeat"
-          source={require("../assets/roomDefault.jpeg")}
-        />
-      ) : (
-        <Swiper
-          paginationStyle={{ marginBottom: -15 }}
-          dotColor={"rgba(200, 200, 200, 0.8)"}
-          activeDotColor={"white"}
-        >
-          {photos.map((photo) => (
-            <SlideImage key={photo.id} source={{ uri: photo.file }} />
-          ))}
-        </Swiper>
-      )}
-    </PhotosContainer>
-    {isSuperHost ? (
-      <SuperHost>
-        <SuperHostText>Superhost</SuperHostText>
-      </SuperHost>
-    ) : null}
-    <Name>{name}</Name>
-    <PriceContainer>
-      <PriceNumber>{price}</PriceNumber>
-      <PriceText> / night</PriceText>
-    </PriceContainer>
-  </Container>
-);
+function getIconName(isFav) {
+  const isAndroid = utils.isAndroid();
+  if (isAndroid) {
+    if (isFav) {
+      return "md-heart";
+    }
+    return "md-heart-empty";
+  } else {
+    if (isFav) {
+      return "ios-heart";
+    }
+    return "ios-heart-empty";
+  }
+}
+
+const RoomCard = ({ id, isFav, isSuperHost, photos, name, price, roomObj }) => {
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+  return (
+    <Container>
+      <TOpacity onPress={() => dispatch(toggleFav(id))}>
+        <FavButton>
+          <Ionicons
+            size={28}
+            color={isFav ? colors.red : "black"}
+            name={getIconName(isFav)}
+          />
+        </FavButton>
+      </TOpacity>
+      <RoomPhotos photos={photos} />
+      <TouchableOpacity
+        style={{ alignItems: "flex-start" }}
+        onPress={() =>
+          navigation.navigate("RoomDetail", {
+            ...roomObj,
+          })
+        }
+      >
+        {isSuperHost ? (
+          <SuperHost>
+            <SuperHostText>Superhost</SuperHostText>
+          </SuperHost>
+        ) : null}
+        <Name>{name}</Name>
+        <PriceContainer>
+          <PriceNumber>{price}</PriceNumber>
+          <PriceText> / night</PriceText>
+        </PriceContainer>
+      </TouchableOpacity>
+    </Container>
+  );
+};
 
 RoomCard.propTypes = {
   id: Pt.number.isRequired,
   isFav: Pt.bool.isRequired,
   isSuperHost: Pt.bool.isRequired,
-  photos: Pt.arrayOf(Pt.shape({ file: Pt.string.isRequired })),
+
   name: Pt.string.isRequired,
   price: Pt.number.isRequired,
+  roomObj: Pt.object.isRequired,
 };
 
 export default RoomCard;

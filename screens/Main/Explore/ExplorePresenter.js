@@ -32,7 +32,22 @@ const FakeText = styled.Text`
   font-weight: 300;
 `;
 
-export default ({ rooms }) => {
+const LoadMore = styled.View`
+  width: 100%;
+  padding: 10px 10px;
+  align-items: center;
+  background-color: #006a70;
+  border-radius: 5px;
+  margin-bottom: 30px;
+`;
+
+const LoadMoreText = styled.Text`
+  color: white;
+  font-size: 18px;
+  font-weight: 500;
+`;
+
+export default ({ rooms, increasePage }) => {
   return (
     <Container>
       {rooms.length === 0 ? (
@@ -56,10 +71,13 @@ export default ({ rooms }) => {
                 id={room.id}
                 isFav={room.is_fav}
                 isSuperHost={room.user.superhost}
+                roomObj={room}
               />
             ))}
-            <TouchableOpacity>
-              <Text>Load More</Text>
+            <TouchableOpacity onPress={increasePage}>
+              <LoadMore>
+                <LoadMoreText>Load More</LoadMoreText>
+              </LoadMore>
             </TouchableOpacity>
           </ScrollView>
         </>

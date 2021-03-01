@@ -1,6 +1,9 @@
 import React from "react";
+import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
+import { StyleSheet } from "react-native";
 
 import Explore from "../screens/Main/Explore";
 import Saved from "../screens/Main/Saved";
@@ -8,11 +11,13 @@ import MapScreen from "../screens/Main/Map";
 import Profile from "../screens/Main/Profile";
 import colors from "../colors";
 import utils from "../utils";
+import Room from "../screens/Main/Room";
+import BackBtn from "../components/Auth/BackBtn";
 
-const Main = createBottomTabNavigator();
+const TabsNavigator = createBottomTabNavigator();
 
-export default () => (
-  <Main.Navigator
+const Tabs = () => (
+  <TabsNavigator.Navigator
     tabBarOptions={{
       activeTintColor: colors.red,
       tabStyle: {
@@ -46,9 +51,40 @@ export default () => (
       },
     })}
   >
-    <Main.Screen name="Explore" component={Explore} />
-    <Main.Screen name="Saved" component={Saved} />
-    <Main.Screen name="Map" component={MapScreen} />
-    <Main.Screen name="Profile" component={Profile} />
-  </Main.Navigator>
+    <TabsNavigator.Screen name="Explore" component={Explore} />
+    <TabsNavigator.Screen name="Saved" component={Saved} />
+    <TabsNavigator.Screen name="Map" component={MapScreen} />
+    <TabsNavigator.Screen name="Profile" component={Profile} />
+  </TabsNavigator.Navigator>
+);
+const MainNavigator = createStackNavigator();
+
+export default () => (
+  <MainNavigator.Navigator
+    mode="modal"
+    screenOptions={{
+      headerBackTitleVisible: false,
+      headerBackImage: () => <BackBtn />,
+    }}
+  >
+    <MainNavigator.Screen
+      name="tabs"
+      component={Tabs}
+      options={{ headerShown: false }}
+    />
+    <MainNavigator.Screen
+      name="RoomDetail"
+      component={Room}
+      options={{
+        headerTransparent: true, //header 영역까지 차지
+        headerBackground: () => (
+          <BlurView
+            intensity={100}
+            tint="light"
+            style={StyleSheet.absoluteFill} //사용필수
+          />
+        ),
+      }}
+    />
+  </MainNavigator.Navigator>
 );
