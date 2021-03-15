@@ -9,6 +9,7 @@ import Explore from "../screens/Main/Explore";
 import Saved from "../screens/Main/Saved";
 import MapScreen from "../screens/Main/Map";
 import Profile from "../screens/Main/Profile";
+import Search from "../screens/Main/Search";
 import colors from "../colors";
 import utils from "../utils";
 import Room from "../screens/Main/Room";
@@ -44,8 +45,8 @@ const Tabs = () => (
         return (
           <Ionicons
             name={iconName}
-            color={focused ? colors.red : "grey"}
             size={24}
+            color={focused ? colors.red : "grey"}
           />
         );
       },
@@ -85,6 +86,11 @@ export default () => (
           />
         ),
       }}
+    />
+    <MainNavigator.Screen
+      options={{ headerShown: false }}
+      name="Search"
+      component={Search}
     />
   </MainNavigator.Navigator>
 );
